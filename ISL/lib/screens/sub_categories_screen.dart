@@ -1,10 +1,9 @@
-
-
 import 'package:flutter/material.dart';
 import '/models/category_model.dart';
 import '/services/local_api.dart';
 import '/screens/main_tabs_screen.dart';
 import '/widgets/app_helpers.dart'; 
+import '/screens/sub_tab_content_screen.dart';
 
 class SubCategoriesScreen extends StatefulWidget {
   final String mainCategoryName;
@@ -24,7 +23,6 @@ class _SubCategoriesScreenState extends State<SubCategoriesScreen> {
   List<SubCategory> _subCategories = [];
   String _errorMessage = '';
   bool _isLoading = true;
-  Object? _lastSelectedSubCategoryJson;
 
   // Base URL for ISL resources
   static const String _baseResourceUrl = 'https://www.olabs.edu.in/isl/';
@@ -86,55 +84,70 @@ class _SubCategoriesScreenState extends State<SubCategoriesScreen> {
   //     },
   //   );
   // }
-  void _handleSubCategoryTap(SubCategory subCategory) {
 
+
+
+void _handleSubCategoryTap(SubCategory subCategory) async {  // ✅ Added async
   final String subCategoryName = subCategory.name ?? 'Untitled Subcategory';
   final String? youtubeId = subCategory.youtubeVideoId;
   
   // Check if YouTube ID is empty or null
   final bool hasVideo = youtubeId != null && youtubeId.isNotEmpty;
 
-  if (!hasVideo) {
-    if (subCategory.name != null) { //navigate directly without overlay
+  // Check how many main tabs exist for this subcategory
+  List<MainTab> mainTabs = [];
+  try {
+    mainTabs = await LocalAPI.getAllMainTabsForSubCategory(
+      widget.mainCategoryName, 
+      subCategoryName
+    );
+  } catch (e) {
+    debugPrint('Error fetching main tabs: $e');
+  }
+
+  // Function to navigate based on main tabs count
+  void navigateToContent() {
+    if (mainTabs.length == 1) {
+      // Skip MainTabsScreen, go directly to SubTabContentScreen
+      final mainTab = mainTabs.first;
+      if (mainTab.id != null) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => SubTabContentScreen(
+              mainCategoryName: widget.mainCategoryName,
+              subCategoryName: subCategoryName,
+              mainTabId: mainTab.id!,
+              mainTabJson: mainTab,
+            ),
+          ),
+        );
+      }
+    } else {
+      // Multiple main tabs, show MainTabsScreen as normal
       Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) => MainTabsScreen(
             mainCategoryName: widget.mainCategoryName,
-            subCategoryName: subCategory.name!,
+            subCategoryName: subCategoryName,
             subCategoryJson: subCategory,
           ),
         ),
       );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Cannot navigate: Subcategory name is missing.')),
-      );
     }
-  } else {  //if youtube id exists the show video overlay
+  }
+
+  // Handle video overlay or direct navigation
+  if (!hasVideo) {
+    navigateToContent();  
+  } else {
     showVideoOverlay(
       context: context,
       youtubeId: youtubeId,
       title: subCategoryName,
       jsonResponse: subCategory,
-      onEnter: () {
-        if (subCategory.name != null) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => MainTabsScreen(
-                mainCategoryName: widget.mainCategoryName,
-                subCategoryName: subCategory.name!,
-                subCategoryJson: subCategory,
-              ),
-            ),
-          );
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Cannot navigate: Subcategory name is missing.')),
-          );
-        }
-      },
+      onEnter: navigateToContent,  
     );
   }
 }

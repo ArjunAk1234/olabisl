@@ -26,7 +26,6 @@ class _MainTabsScreenState extends State<MainTabsScreen> {
   List<MainTab> _mainTabs = [];
   String _errorMessage = '';
   bool _isLoading = true;
-  Object? _lastSelectedMainTabJson;
 
   // Base URL for ISL resources
   static const String _baseResourceUrl = 'https://www.olabs.edu.in/isl/';
@@ -57,10 +56,6 @@ class _MainTabsScreenState extends State<MainTabsScreen> {
   }
 
   void _handleMainTabTap(MainTab mainTab) {
-    setState(() {
-      _lastSelectedMainTabJson = mainTab;
-    });
-
     final String mainTabName = mainTab.name ?? 'Untitled Tab';
     final String? youtubeId = mainTab.youtubeVideoId;
 

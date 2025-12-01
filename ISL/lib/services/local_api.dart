@@ -1,13 +1,12 @@
 
 
 import 'dart:convert';
-import 'package:http/http.dart' as http; // Added http import
+import 'package:http/http.dart' as http;
 import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart' show rootBundle; // Retained but not used for network calls
-import '../models/category_model.dart'; // Make sure this path is correct
+import 'package:flutter/services.dart' show rootBundle; 
+import '../models/category_model.dart'; 
 
-/// A class to interact with the remote ISL API to fetch category-wise data,
-/// keeping the original class name 'LocalAPI' for compatibility.
+
 class LocalAPI {
   // Base URL for all API endpoints
   static const String _baseUrl = 'https://www.olabs.edu.in/isl/api/';
@@ -91,10 +90,6 @@ class LocalAPI {
     return category.id!;
   }
   
-  // =========================================================================
-  //                       MAIN CATEGORY LEVEL API CALLS
-  // =========================================================================
-
   /// Retrieves a list of all main categories.
   /// Returns an empty list if no categories are found.
   static Future<List<MainCategory>> getAllMainCategories() async {
@@ -138,9 +133,6 @@ class LocalAPI {
     return category.image;
   }
 
-  // =========================================================================
-  //                       SUB CATEGORY LEVEL API CALLS
-  // =========================================================================
 
   /// Retrieves a list of all [SubCategory] objects for a given main category name.
   /// Returns an empty list if no subcategories are found or main category does not exist.
@@ -213,12 +205,7 @@ class LocalAPI {
     return subCategory.image;
   }
 
-  // =========================================================================
-  //                         MAIN TAB LEVEL API CALLS
-  //
-  // NOTE: All subsequent methods rely on the full data being present within
-  // the SubCategory object, as there are no deeper API endpoints.
-  // =========================================================================
+
 
   /// Retrieves a list of all [MainTab] objects for a given subcategory name.
   /// Returns an empty list if no main tabs are found or subcategory does not exist.
@@ -262,9 +249,6 @@ class LocalAPI {
     return mainTab.youtubeVideoId;
   }
 
-  // =========================================================================
-  //                         SUB-TAB LEVEL API CALLS
-  // =========================================================================
 
   /// Retrieves a list of all [SubTabBase] objects (polymorphic list) for a specific main tab.
   /// Returns an empty list if no sub-tabs are found or main tab does not exist.
@@ -308,10 +292,6 @@ class LocalAPI {
     return subTab.youtubeVideoId;
   }
 
-  // =========================================================================
-  //                     SPECIFIC SUB-TAB TYPE API CALLS
-  // =========================================================================
-  // --- WordsOnlySubTab Specific Calls ---
   /// Retrieves content specifically for a 'Words Only' sub-tab as a [WordsOnlySubTab] object.
   /// Throws an [Exception] if the sub-tab is not of this type or not found.
   static Future<WordsOnlySubTab> getWordsOnlySubTabContent(String mainCategoryName, String subCategoryName, String mainTabId, String subTabId) async {

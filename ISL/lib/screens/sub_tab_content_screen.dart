@@ -32,7 +32,6 @@ class _SubTabContentScreenState extends State<SubTabContentScreen> {
 
   String _errorMessage = '';
   bool _isLoading = true;
-  Object? _lastApiCallJson; // JSON response for the *content* of the selected sub-tab
 
   // State for Sentence Making Game (managed here to be passed down)
   Activity? _selectedActivity;
@@ -52,7 +51,6 @@ class _SubTabContentScreenState extends State<SubTabContentScreen> {
       _errorMessage = '';
       _allSubTabs = [];
       _selectedSubTabContent = null;
-      _lastApiCallJson = null;
       _selectedActivity = null;
       _availableGameWords = [];
       _chosenSentenceWords.clear();
@@ -83,7 +81,6 @@ class _SubTabContentScreenState extends State<SubTabContentScreen> {
     setState(() {
       _isLoading = true;
       _errorMessage = '';
-      _lastApiCallJson = null;
       _selectedActivity = null;
       _availableGameWords = [];
       _chosenSentenceWords.clear();
@@ -94,7 +91,6 @@ class _SubTabContentScreenState extends State<SubTabContentScreen> {
       final subTabBase = await LocalAPI.getSubTabById(
           widget.mainCategoryName, widget.subCategoryName, widget.mainTabId, subTabId);
       _selectedSubTabContent = subTabBase;
-      _lastApiCallJson = subTabBase; // Store the content object itself
 
       // Handle specific sub-tab types for game logic or display setup
       if (subTabBase is SentenceMakingSubTab) {
@@ -187,17 +183,6 @@ class _SubTabContentScreenState extends State<SubTabContentScreen> {
       }
       _chosenSentenceWords.clear(); // Clear for next attempt
     });
-  }
-
-
-  // Helper to get the runtime type name of a SubTabBase for display
-  String _getActualSubTabTypeName(SubTabBase? subTab) {
-    if (subTab is WordsOnlySubTab) return 'WordsOnly';
-    if (subTab is SentenceMakingSubTab) return 'SentenceMaking';
-    if (subTab is SentenceOnlySubTab) return 'SentenceOnly';
-    if (subTab is AssessmentSubTab) return 'Assessment';
-    if (subTab is GenericSubTab) return 'Generic';
-    return 'Unknown/No Sub-Tab Selected';
   }
 
 @override

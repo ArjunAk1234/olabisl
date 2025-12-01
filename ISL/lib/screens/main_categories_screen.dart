@@ -17,9 +17,7 @@ class _MainCategoriesScreenState extends State<MainCategoriesScreen> {
   List<MainCategory> _mainCategories = [];
   String _errorMessage = '';
   bool _isLoading = true;
-  Object? _lastSelectedCategoryJson;
 
-  // Base URL for ISL resources as defined in your requirements
   static const String _baseResourceUrl = 'https://www.olabs.edu.in/isl/';
 
   @override
@@ -54,9 +52,6 @@ class _MainCategoriesScreenState extends State<MainCategoriesScreen> {
   }
 
   // void _handleMainCategoryTap(MainCategory category) {
-  //   setState(() {
-  //     _lastSelectedCategoryJson = category;
-  //   });
 
   //   final String categoryName = category.name ?? 'Untitled Category';
   //   final String? youtubeId = category.youtubeVideoId;
